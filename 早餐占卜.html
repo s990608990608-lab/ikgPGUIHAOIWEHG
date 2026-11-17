@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI早餐占卜師</title>
+
+<style>
+body{
+    font-family:Microsoft JhengHei;
+    background:#fff8e1;
+    margin:0;
+    padding:20px;
+}
+.box{
+    max-width:800px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,.1);
+}
+h1{
+    text-align:center;
+    color:#f57c00;
+}
+h3{
+    color:#e65100;
+}
+button{
+    width:100%;
+    padding:12px;
+    background:#ff9800;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:18px;
+    cursor:pointer;
+}
+button:hover{
+    background:#f57c00;
+}
+#result{
+    margin-top:20px;
+    background:#fff3cd;
+    padding:20px;
+    border-radius:10px;
+}
+.star{
+    color:gold;
+    font-size:26px;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+
+<h1>🍳 AI早餐占卜師</h1>
+
+<h3>Q1 今天的心情？</h3>
+<label><input type="radio" name="mood" value="開心" checked> 開心</label>
+<label><input type="radio" name="mood" value="普通"> 普通</label>
+<label><input type="radio" name="mood" value="疲累"> 疲累</label>
+
+<h3>Q2 今天想吃什麼？</h3>
+<label><input type="radio" name="taste" value="鹹" checked> 鹹食</label>
+<label><input type="radio" name="taste" value="甜"> 甜食</label>
+
+<h3>Q3 今天要吃多少？</h3>
+<label><input type="radio" name="size" value="小"> 小份</label>
+<label><input type="radio" name="size" value="中" checked> 正常</label>
+<label><input type="radio" name="size" value="大"> 吃很飽</label>
+
+<h3>Q4 今天最需要什麼？</h3>
+<label><input type="radio" name="goal" value="活力" checked> 活力</label>
+<label><input type="radio" name="goal" value="療癒"> 療癒</label>
+<label><input type="radio" name="goal" value="好運"> 好運</label>
+
+<h3>Q5 早餐預算？</h3>
+<label><input type="radio" name="budget" value="50">50元以下</label>
+<label><input type="radio" name="budget" value="80" checked>50~100元</label>
+<label><input type="radio" name="budget" value="100">100元以上</label>
+
+<br><br>
+
+<button onclick="fortune()">
+🔮 開始早餐占卜
+</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+const menu=[
+
+//單點
+
+["草莓吐司","甜","小",30,"奶茶","甜蜜開場",3,4],
+["花生吐司","甜","小",35,"奶茶","元氣補給",4,5],
+["巧克力吐司","甜","小",35,"奶茶","快樂能量",4,3],
+
+["火腿蛋吐司","鹹","中",60,"紅茶","效率提升",4,7],
+["鮪魚蛋吐司","鹹","中",65,"豆漿","活力滿滿",5,9],
+["肉鬆蛋吐司","鹹","中",50,"紅茶","好運降臨",4,7],
+
+["原味蛋餅","鹹","中",40,"紅茶","平穩順利",4,7],
+["火腿蛋餅","鹹","中",45,"紅茶","步步高升",4,7],
+["鮪魚蛋餅","鹹","中",30,"豆漿","貴人接近",5,9],
+["培根蛋餅","鹹","大",30,"奶茶","戰鬥模式",5,6],
+
+["火腿漢堡","鹹","中",100,"紅茶","效率提升",4,7],
+["鮪魚漢堡","鹹","中",80,"豆漿","機會來臨",5,8],
+["豬排漢堡","鹹","大",70,"奶茶","衝刺成功",5,6],
+
+["火腿總匯","鹹","大",60,"咖啡","事事順心",5,8],
+["鮪魚總匯","鹹","大",70,"豆漿","大吉大利",5,9],
+
+["薯條","鹹","小",50,"紅茶","療癒時光",3,3],
+["雞塊","鹹","小",30,"紅茶","放鬆一下",3,4],
+["蘿蔔糕","鹹","中",40,"豆漿","穩定發揮",4,6],
+
+//套餐
+
+["A套餐 鮪魚蛋吐司+豆漿","鹹","中",150,"豆漿","活力滿滿",5,9],
+["B套餐 火腿蛋吐司+紅茶","鹹","中",120,"紅茶","順利開局",4,7],
+["C套餐 火腿蛋餅+奶茶","鹹","中",80,"奶茶","精神百倍",4,7],
+["D套餐 鮪魚蛋餅+豆漿","鹹","中",90,"豆漿","貴人相助",5,9],
+["E套餐 培根蛋餅+奶茶","鹹","大",100,"奶茶","戰鬥模式",5,6],
+["F套餐 火腿漢堡+紅茶","鹹","中",120,"紅茶","效率提升",4,7],
+["G套餐 豬排漢堡+奶茶","鹹","大",150,"奶茶","衝刺成功",5,6],
+["H套餐 鮪魚總匯+豆漿","鹹","大",130,"豆漿","大吉大利",5,9],
+["I套餐 火腿總匯+咖啡","鹹","大",170,"咖啡","事事順心",5,8],
+["J套餐 蘿蔔糕+荷包蛋+豆漿","鹹","中",200,"豆漿","穩定發揮",4,8],
+["K套餐 香酥抓餅+奶茶","鹹","大",130,"奶茶","幸運加倍",5,7],
+["L套餐 巧克力厚片+奶茶","甜","中",100,"奶茶","療癒時光",4,4],
+["M套餐 花生厚片+奶茶","甜","中",110,"奶茶","元氣補給",4,5],
+["N套餐 法式吐司+鮮奶","甜","中",150,"鮮奶","幸福來敲門",5,6],
+["O套餐 沙拉+優酪乳","甜","小",100,"優酪乳","身心平衡",4,10]
+
+];
+
+function getValue(name){
+return document.querySelector(`input[name="${name}"]:checked`).value;
+}
+
+function fortune(){
+
+let mood=getValue("mood");
+let taste=getValue("taste");
+let size=getValue("size");
+let budget=getValue("budget");
+let goal=getValue("goal");
+
+let list=menu.filter(item=>{
+
+let budgetPass=false;
+
+if(budget=="50") budgetPass=item[3]<=50;
+if(budget=="80") budgetPass=item[3]<=80;
+if(budget=="100") budgetPass=true;
+
+return item[1]==taste &&
+       item[2]==size &&
+       budgetPass;
+});
+
+if(list.length===0){
+list=menu;
+}
+
+let food=list[Math.floor(Math.random()*list.length)];
+
+let stars="★".repeat(food[6])+
+          "☆".repeat(5-food[6]);
+
+let health="普通";
+
+if(food[7]>=9) health="超健康🥗";
+else if(food[7]>=7) health="健康✅";
+else if(food[7]>=5) health="普通🙂";
+else health="少量享用🍟";
+
+document.getElementById("result").innerHTML=`
+
+<h2>🍳 今日早餐占卜結果</h2>
+
+<p><b>推薦餐點：</b>${food[0]}</p>
+
+<p><b>推薦飲料：</b>${food[4]}</p>
+
+<p><b>價格：</b> NT$${food[3]}</p>
+
+<p><b>今日心情：</b>${mood}</p>
+
+<p><b>今日需求：</b>${goal}</p>
+
+<p><b>關鍵字：</b>${food[5]}</p>
+
+<p><b>健康指數：</b>${health}</p>
+
+<p class="star">${stars}</p>
+
+`;
+
+}
+
+</script>
+
+</body>
+</html>
